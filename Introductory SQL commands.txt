@@ -1,0 +1,278 @@
+IMPORTANT TEMPLATE
+
+
+select col1 , avg( col6 )
+
+from table
+
+## WHERE
+where condition1 # col =,>,<,<=,>=,<> value
+and condition2
+and ( condition3 or condition4 )
+and col between range # inclusive 2000 and 2010 == [2000:2010]
+and col in (values) # set of values = (2, 3, 'a' , 'b' )
+and (col is null or col is not null)
+and col LIKE 'Data%' # matches any value coming after it
+and col LIKE 'DataC_mp' # matches 1 place to any value
+
+# GROUP BY for aggregation in the selected area, can't aggregate over col without defining them here
+group by col1
+
+# Having for defining a condition based on an aggregate
+having min( col4 ) > 500
+
+# Orderting
+
+ORDER BY col DESC
+
+
+# LIMITING
+ limit 5
+
+
+
+
+===========================================================
+select col1, col2 , col3
+from table
+------------------------
+select *
+from table
+--------------------
+select distinct col1
+from table
+------------------
+select count( col1 ) # non null ignores null values
+from table
+-------------------
+select count(*) # all rows
+from table
+-----------------
+select count( distinct col1 )
+from table
+--------------------
+
+FOR TEXT 
+
+
+In SQL, the LIKE operator can be used in a WHERE clause to search for a pattern in a column. To accomplish this, you use something called a wildcard as a placeholder for some other values. There are two wildcards you can use with LIKE
+The % wildcard will match zero, one, or many characters in text. For example, the following query matches companies like 'Data', 'DataC' 'DataCamp', 'DataMind', and so on:
+
+SELECT name
+FROM companies
+WHERE name LIKE 'Data%';
+
+
+The _ wildcard will match a single character. For example, the following query matches companies like 'DataCamp', 'DataComp', and so on:
+
+SELECT name
+FROM companies
+WHERE name LIKE 'DataC_mp';
+
+
+You can also use the NOT LIKE operator to find records that don't match the pattern you specify.
+
+
+-----------------------------------------------
+
+
+Aggregate functions
+
+
+AVG , MAX , SUM , MIN 
+
+Aggregate functions can be combined with the WHERE clause to gain further insights from your data:
+
+SELECT SUM(budget)
+FROM films
+WHERE release_year >= 2010;
+
+
+you can also do any arthematic operation like - , / , * , +  between any coulmns or aggregate functions
+
+select max(x) - min(x) # this gives you the value between those two
+
+
+remember when deviding put the numbers as float
+
+-----------------------------------------------
+
+
+Aliasing 
+
+Get the title and net profit (the amount a film grossed, minus its budget) for all films. Alias the net profit as net_profit.
+
+select title , gross - budget as net_profit
+from films
+
+
+
+------------------------------------------------------------------
+
+
+ORDER BY
+
+By default ORDER BY will sort in ascending order. If you want to sort the results in descending order, you can use the DESC keyword. For example,
+
+SELECT col
+FROM table
+ORDER BY col DESC;
+
+
+ORDER BY can also be used to sort on multiple columns. It will sort by the first column specified, then sort by the next, then the next, and so on. For example sorts on birth dates first (oldest to newest) and then sorts on the names in alphabetical order. The order of columns is important!
+
+SELECT birthdate, name
+FROM people
+ORDER BY birthdate, name;
+
+
+
+
+-----------------------------------------------------------
+
+GROUP BY
+Now you know how to sort results! Often you'll need to aggregate results. For example, you might want to count the number of male and female employees in your company. Here, what you want is to group all the males together and count them, and group all the females together and count them. In SQL, GROUP BY allows you to group a result by one or more columns, like so:
+
+SELECT sex, count(*)
+FROM employees
+GROUP BY sex;
+This might give, for example:
+
+sex	count
+male	15
+female	19
+
+Commonly, GROUP BY is used with aggregate functions like COUNT() or MAX(). Note that GROUP BY always goes after the FROM clause!
+
+
+A word of warning: SQL will return an error if you try to SELECT a field that is not in your GROUP BY clause without using it to calculate some kind of value about the entire group.
+
+Note that you can combine GROUP BY with ORDER BY to group your results, calculate something about them, and then order your results. For example,
+
+SELECT sex, count(*)
+FROM employees
+GROUP BY sex
+ORDER BY count DESC;
+might return something like
+
+sex	count
+female	19
+male	15
+
+because there are more females at our company than males. Note also that ORDER BY always goes after GROUP BY. Let's try some exercises!
+
+
+Get the IMDB score and count of film reviews grouped by IMDB score in the reviews table.
+
+select imdb_score, count(*)
+from reviews
+group by imdb_score
+
+
+
+Get the release year, country, and highest budget spent making a film for each year, for each country. Sort your results by release year and country.
+
+select release_year, max(budget) , country
+from films
+group by release_year, country
+order by release_year, country
+
+
+--------------------------------------------------------------
+
+HAVING a great time
+In SQL, aggregate functions can't be used in WHERE clauses. For example, the following query is invalid:
+
+SELECT release_year
+FROM films
+GROUP BY release_year
+WHERE COUNT(title) > 10;
+
+This means that if you want to filter based on the result of an aggregate function, you need another way! That's where the HAVING clause comes in. For example,
+
+SELECT release_year
+FROM films
+GROUP BY release_year
+HAVING COUNT(title) > 10;
+shows only those years in which more than 10 films were released.
+
+---------------------------------------------------------------------------
+
+Time to practice using ORDER BY, GROUP BY and HAVING together.
+
+Now you're going to write a query that returns the average budget and average gross earnings for films in each year after 1990, if the average budget is greater than $60 million.
+
+This is going to be a big query, but you can handle it!
+
+SELECT release_year, AVG(budget) AS avg_budget, AVG(gross) AS avg_gross
+FROM films
+WHERE release_year > 1990
+GROUP BY release_year
+HAVING AVG(budget) > 60000000
+order by avg_gross desc
+
+
+
+Get the country, average budget, and average gross take of countries that have made more than 10 films. Order the result by country name, and limit the number of results displayed to 5. You should alias the averages as avg_budget and avg_gross respectively.
+
+
+
+select country, avg (budget) as avg_budget, 
+avg (gross) as avg_gross
+
+from films 
+
+group by country 
+
+having count(films)>10
+
+order by country
+
+limit 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
