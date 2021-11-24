@@ -1,0 +1,130 @@
+## Union used to stack rows on top of each other
+
+## You have union and union all and intersect and except
+
+you select the columns you want from each table, make sure they are both present in both tables
+or else the output will be nans if missing in 1 of the tables
+
+
+
+
+Combine the two new tables into one table containing all of the fields in economies2010.
+Sort this resulting single table by country code and then by year, both in ascending order.
+
+select *
+from economies2010
+
+union
+
+select *
+from economies2015
+order by code , year
+
+
+
+
+Determine all (non-duplicated) country codes in either the cities or the currencies table. The result should be a table with only one field called country_code.
+Sort by country_code in alphabetical order.
+
+
+select code as country_code
+from currencies
+
+union
+
+select country_code as country_code
+from cities 
+
+order by country_code
+
+
+
+
+---------------------------------------------------
+
+# Excepts shows the rows that appear in the first table but not the second table X - Y in x but not y
+
+
+
+
+Determine the names of capital cities that are not listed in the cities table.
+Order by capital in ascending order.
+The cities table contains information about 236 of the world's most populous cities. The result of your query may surprise you in terms of the number of capital cities that do not appear in this list!
+
+
+select c2.capital as capital
+from countries as c2 
+
+except
+
+select c1.name as capital
+from cities as c1
+
+order by capital
+
+
+------------------------------------------------------
+
+# semi-join
+
+You are now going to use the concept of a semi-join to identify languages spoken in the Middle East.
+
+SELECT DISTINCT name
+  FROM languages as l
+
+where l.code in
+  (SELECT code
+   FROM countries
+   WHERE region = 'Middle East')
+
+order by name;
+
+
+
+=========================================
+
+
+USING JOINS + UNIONS + SUBQUERIES
+
+Set theory challenge
+Congratulations! You've now made your way to the challenge problem for this third chapter. Your task here will be to incorporate two of UNION/UNION ALL/INTERSECT/EXCEPT to solve a challenge involving three tables.
+
+In addition, you will use a subquery as you have in the last two exercises! This will be great practice as you hop into subqueries more in Chapter 4!
+
+Identify the country codes that are included in either economies or currencies but not in populations.
+Use that result to determine the names of cities in the countries that match the specification in the previous instruction.
+
+
+-- Select the city name
+select c1.name
+  -- Alias the table where city name resides
+  from  cities AS c1
+  -- Choose only records matching the result of multiple set theory clauses
+  WHERE c1.country_code IN
+    (
+      
+      SELECT distinct e.code
+      FROM economies AS e
+
+      union
+
+      SELECT distinct c2.code
+      FROM currencies AS c2
+
+      except
+
+      SELECT distinct p.country_code
+      FROM populations AS p 
+  
+  )
+
+
+
+
+
+
+
+
+
+
+
